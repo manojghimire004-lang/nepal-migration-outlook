@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const context = vm.createContext({});
+vm.runInContext(fs.readFileSync('app.js','utf8').split('const fields=')[0] + ';globalThis.calculateForTest=calculate;', context);
+assert.equal(context.calculateForTest({jobs:4,education:4,career:4,goal:4,family:1,preparation:0}).outlook, 'Leaning toward staying');
+assert.equal(context.calculateForTest({jobs:0,education:0,career:0,goal:0,family:0,preparation:4}).score, 21);
+assert.equal(context.calculateForTest({jobs:2,education:2,career:2,goal:3,family:1,preparation:1}).outlook, 'Your outlook is uncertain');
+assert.throws(() => context.calculateForTest({jobs:9}));
+console.log('Scoring checks passed.');
